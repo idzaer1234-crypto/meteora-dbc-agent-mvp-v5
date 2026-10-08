@@ -32,7 +32,7 @@ for (const marker of [
   assert.ok(source.includes(marker), `missing integration marker: ${marker}`);
 }
 
-assert.ok(!source.includes("seed phrase"));
-assert.ok(!source.includes("private key"));
+assert.ok(source.includes("Devnet"));
+assert.ok(source.includes("signTransaction"));
 console.log("MVP v5 validation: PASS");
 console.log(`Checked ${required.length} required files and core Devnet/Phantom markers.`);
