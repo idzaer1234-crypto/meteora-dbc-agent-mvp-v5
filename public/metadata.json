@@ -1,0 +1,10 @@
+{
+  "name": "Meteora Agent Test",
+  "symbol": "MAT",
+  "description": "Devnet test metadata for Meteora DBC Agent MVP v5.",
+  "seller_fee_basis_points": 0,
+  "attributes": [
+    {"trait_type":"network","value":"devnet"},
+    {"trait_type":"project","value":"meteora-dbc-agent-mvp-v5"}
+  ]
+}
