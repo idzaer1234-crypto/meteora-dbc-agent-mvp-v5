@@ -1,0 +1,24 @@
+{
+  "name": "meteora-dbc-agent-mvp-v5",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "node tests/validation.mjs",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.13",
+    "@solana/web3.js": "1.98.4",
+    "bn.js": "5.2.2"
+  },
+  "devDependencies": {
+    "@types/bn.js": "5.1.5",
+    "@types/node": "24.7.2",
+    "@vitejs/plugin-react": "5.0.4",
+    "typescript": "5.9.3",
+    "vite": "7.1.9"
+  }
+}
