@@ -245,10 +245,12 @@ async function createConfig() {
     setStatus("Phantom signed. Broadcasting Devnet transaction…");
     const signature = await send(prepared.signed, prepared.latest);
     lastConfig = config.publicKey;
+    const onChainConfig = await client.state.getPoolConfig(lastConfig);
+    if (!onChainConfig) throw new Error("Transaction confirmed, but the DBC config account was not readable yet.");
 
-    showResult(`Config created: ${short(lastConfig.toBase58())}`, signature, lastConfig);
-    setStatus("DBC config confirmed on Solana Devnet.");
-    render();
+    showResult(`Config created and verified: ${short(lastConfig.toBase58())}`, signature, lastConfig);
+    setStatus("DBC config confirmed and readable on Solana Devnet.");
+    updateButtons();
   } catch (e) {
     setStatus(e instanceof Error ? e.message : String(e), true);
   } finally {
@@ -281,9 +283,12 @@ async function createPool() {
     setStatus("Phantom signed. Broadcasting Devnet pool transaction…");
     const signature = await send(prepared.signed, prepared.latest);
     lastMint = baseMint.publicKey;
+    const onChainPool = await client.state.getPoolByBaseMint(lastMint);
+    if (!onChainPool) throw new Error("Transaction confirmed, but the DBC pool was not readable yet.");
 
-    showResult(`Pool/token created: ${short(lastMint.toBase58())}`, signature, lastMint);
-    setStatus("DBC pool confirmed on Solana Devnet.");
+    showResult(`Pool/token created and verified: ${short(lastMint.toBase58())}`, signature, lastMint);
+    setStatus("DBC pool confirmed and readable on Solana Devnet.");
+    updateButtons();
   } catch (e) {
     setStatus(e instanceof Error ? e.message : String(e), true);
   } finally {
