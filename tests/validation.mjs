@@ -33,6 +33,8 @@ for (const marker of [
   "feePeriods",
   "feeDuration",
   "v >= 25 && v <= 9900",
+  "endingFeeBps > startingFeeBps",
+  "partnerLockedPct + creatorLockedPct < 10",
   "startingFeeBps !== endingFeeBps && (feePeriods < 1 || feeDuration < 1)",
   "creatorTradingFeePercentage: creatorFeePct",
   "partnerLiquidityPercentage: partnerLiquidityPct",
