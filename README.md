@@ -7,7 +7,8 @@ A browser-first, non-custodial Meteora Dynamic Bonding Curve MVP for **Solana De
 - Phantom wallet connect/disconnect.
 - Devnet-only RPC endpoint.
 - Meteora DBC SDK **1.5.13** integration.
-- Curve construction with `buildCurveWithMarketCap`.
+- Curve construction with `buildCurveWithMarketCap`, including configurable starting/ending fees, creator trading-fee percentage, and partner/creator liquidity allocation.
+- Input validation for market-cap ordering, fee bounds, and a 100% liquidity-allocation total.
 - Real DBC config transaction via `client.partner.createConfig`.
 - Real token + DBC pool transaction via `client.creator.createPool`.
 - Phantom is the user signer; the application never asks for a seed phrase or private key.
