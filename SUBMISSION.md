@@ -56,7 +56,7 @@ This is an MVP, not a production launch platform. Graduation/migration and swap 
 - Devnet-only prototype; do not use Mainnet funds.
 - No automatic signing or custody.
 - No seed phrase/private-key input.
-- Metadata currently points to a static JSON file in the repository; the UI permits entering a name and symbol, so consistency between entered values and the static metadata must be checked before presenting this as launch-ready.
+- Metadata points to a static JSON file in the repository. The app now rejects a token name or symbol that differs from the static metadata values (Meteora Agent Test / MAT).
 - Graduation/migration and swap UI are not wired.
 - Source-level validation checks integration markers and required files; it does not itself prove that transactions succeed on-chain.
 
