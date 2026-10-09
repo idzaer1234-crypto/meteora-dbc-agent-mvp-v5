@@ -18,7 +18,7 @@ Built **Meteora DBC Agent MVP v5** — a browser-first, non-custodial prototype 
 Current scope:
 - Phantom wallet connect/disconnect
 - Devnet RPC and Devnet Explorer links
-- DBC configuration transaction flow
+- Configurable DBC curve parameters: initial/migration market caps, starting/ending fees, creator trading-fee percentage, and partner/creator liquidity splits
 - Token + DBC pool creation flow
 - On-chain account read-back checks after confirmation
 - No seed phrase/private-key collection and no Mainnet transaction path
@@ -31,7 +31,7 @@ This is an MVP, not a production launch platform. Graduation/migration and swap 
 ## Current functionality described by the source
 
 1. Connect or disconnect Phantom.
-2. Build a DBC curve from the entered initial and migration market-cap values.
+2. Build a DBC curve from the entered initial and migration market-cap values, starting/ending fee basis points, creator fee percentage, and partner/creator liquidity allocation.
 3. Request Phantom approval for a DBC config transaction.
 4. Submit the signed transaction to Solana Devnet and check that the config account can be read.
 5. Request Phantom approval for token + DBC pool creation.
@@ -58,7 +58,7 @@ This is an MVP, not a production launch platform. Graduation/migration and swap 
 - No seed phrase/private-key input.
 - Metadata points to a static JSON file in the repository. The app now rejects a token name or symbol that differs from the static metadata values (Meteora Agent Test / MAT).
 - Graduation/migration and swap UI are not wired.
-- Source-level validation checks integration markers and required files; it does not itself prove that transactions succeed on-chain.
+- Source-level validation checks integration markers, configurable-parameter safeguards, and required files; it does not itself prove that transactions succeed on-chain.
 
 ## Submission integrity
 
