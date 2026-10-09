@@ -93,8 +93,10 @@ function render() {
           <label>Symbol<input id="tokenSymbol" value="${METADATA_SYMBOL}" maxlength="10"></label>
           <label>Initial market cap (SOL)<input id="initialCap" type="number" min="0.001" step="0.001" value="0.1"></label>
           <label>Migration market cap (SOL)<input id="migrationCap" type="number" min="0.002" step="0.001" value="1"></label>
-          <label>Starting fee (basis points)<input id="startingFeeBps" type="number" min="1" max="10000" step="1" value="100"></label>
-          <label>Ending fee (basis points)<input id="endingFeeBps" type="number" min="1" max="10000" step="1" value="100"></label>
+          <label>Starting fee (basis points)<input id="startingFeeBps" type="number" min="25" max="9900" step="1" value="100"></label>
+          <label>Ending fee (basis points)<input id="endingFeeBps" type="number" min="25" max="9900" step="1" value="100"></label>
+          <label>Fee schedule periods<input id="feePeriods" type="number" min="0" max="1000000" step="1" value="0"></label>
+          <label>Fee schedule duration (seconds)<input id="feeDuration" type="number" min="0" max="31536000" step="1" value="0"></label>
           <label>Creator trading fee (%)<input id="creatorFeePct" type="number" min="0" max="100" step="1" value="50"></label>
           <label>Partner liquidity (%)<input id="partnerLiquidityPct" type="number" min="0" max="100" step="1" value="50"></label>
           <label>Partner permanently locked (%)<input id="partnerLockedPct" type="number" min="0" max="100" step="1" value="5"></label>
@@ -186,6 +188,8 @@ function readCurve() {
   const migration = Number((document.querySelector<HTMLInputElement>("#migrationCap")!).value);
   const startingFeeBps = Number((document.querySelector<HTMLInputElement>("#startingFeeBps")!).value);
   const endingFeeBps = Number((document.querySelector<HTMLInputElement>("#endingFeeBps")!).value);
+  const feePeriods = Number((document.querySelector<HTMLInputElement>("#feePeriods")!).value);
+  const feeDuration = Number((document.querySelector<HTMLInputElement>("#feeDuration")!).value);
   const creatorFeePct = Number((document.querySelector<HTMLInputElement>("#creatorFeePct")!).value);
   const partnerLiquidityPct = Number((document.querySelector<HTMLInputElement>("#partnerLiquidityPct")!).value);
   const partnerLockedPct = Number((document.querySelector<HTMLInputElement>("#partnerLockedPct")!).value);
@@ -194,8 +198,14 @@ function readCurve() {
   if (!Number.isFinite(initial) || !Number.isFinite(migration) || initial <= 0 || migration <= initial) {
     throw new Error("Migration market cap must be greater than initial market cap.");
   }
-  if (![startingFeeBps, endingFeeBps].every((v) => Number.isInteger(v) && v >= 1 && v <= 10000)) {
-    throw new Error("Starting and ending fees must be whole numbers from 1 to 10,000 basis points.");
+  if (![startingFeeBps, endingFeeBps].every((v) => Number.isInteger(v) && v >= 25 && v <= 9900)) {
+    throw new Error("Starting and ending fees must be whole numbers from 25 to 9,900 basis points.");
+  }
+  if (!Number.isInteger(feePeriods) || feePeriods < 0 || !Number.isInteger(feeDuration) || feeDuration < 0) {
+    throw new Error("Fee schedule periods and duration must be non-negative whole numbers.");
+  }
+  if (startingFeeBps !== endingFeeBps && (feePeriods < 1 || feeDuration < 1)) {
+    throw new Error("To change the fee over time, set at least one fee period and a duration in seconds. Use equal starting/ending fees for a flat fee.");
   }
   if (![creatorFeePct, partnerLiquidityPct, partnerLockedPct, creatorLiquidityPct, creatorLockedPct]
       .every((v) => Number.isFinite(v) && v >= 0 && v <= 100)) {
@@ -220,8 +230,8 @@ function readCurve() {
         feeSchedulerParam: {
           startingFeeBps,
           endingFeeBps,
-          numberOfPeriod: 0,
-          totalDuration: 0
+          numberOfPeriod: feePeriods,
+          totalDuration: feeDuration
         }
       },
       dynamicFeeEnabled: true,
