@@ -30,6 +30,8 @@ declare global {
 const RPC_URL = "https://api.devnet.solana.com";
 const EXPLORER = "https://explorer.solana.com";
 const QUOTE_MINT = new PublicKey("So11111111111111111111111111111111111111112");
+const METADATA_NAME = "Meteora Agent Test";
+const METADATA_SYMBOL = "MAT";
 const METADATA_URI = "https://raw.githubusercontent.com/idzaer1234-crypto/meteora-dbc-agent-mvp-v5/main/public/metadata.json";
 
 const connection = new Connection(RPC_URL, "confirmed");
@@ -87,8 +89,8 @@ function render() {
       <section class="card">
         <h2>2. DBC configuration</h2>
         <div class="grid">
-          <label>Token name<input id="tokenName" value="Meteora Agent Test" maxlength="32"></label>
-          <label>Symbol<input id="tokenSymbol" value="MAT" maxlength="10"></label>
+          <label>Token name<input id="tokenName" value="${METADATA_NAME}" maxlength="32"></label>
+          <label>Symbol<input id="tokenSymbol" value="${METADATA_SYMBOL}" maxlength="10"></label>
           <label>Initial market cap (SOL)<input id="initialCap" type="number" min="0.001" step="0.001" value="0.1"></label>
           <label>Migration market cap (SOL)<input id="migrationCap" type="number" min="0.002" step="0.001" value="1"></label>
         </div>
@@ -133,6 +135,7 @@ function render() {
       setStatus(e instanceof Error ? e.message : String(e), true);
     } finally {
       busy = false;
+      updateButtons();
     }
   };
 
@@ -161,10 +164,13 @@ async function prepareAndSign(tx: Transaction, extraSigner: Keypair) {
 
 async function send(signed: Transaction, latest: { blockhash: string; lastValidBlockHeight: number }) {
   const signature = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: false });
-  await connection.confirmTransaction(
+  const confirmation = await connection.confirmTransaction(
     { signature, blockhash: latest.blockhash, lastValidBlockHeight: latest.lastValidBlockHeight },
     "confirmed"
   );
+  if (confirmation.value.err) {
+    throw new Error("Devnet transaction failed: " + JSON.stringify(confirmation.value.err));
+  }
   return signature;
 }
 
@@ -265,6 +271,9 @@ async function createPool() {
     const name = (document.querySelector<HTMLInputElement>("#tokenName")!).value.trim();
     const symbol = (document.querySelector<HTMLInputElement>("#tokenSymbol")!).value.trim();
     if (!name || !symbol) throw new Error("Token name and symbol are required.");
+    if (name !== METADATA_NAME || symbol !== METADATA_SYMBOL) {
+      throw new Error("This MVP uses static metadata. Use name \"" + METADATA_NAME + "\" and symbol \"" + METADATA_SYMBOL + "\" so the token fields match the metadata JSON.");
+    }
 
     setStatus("Building token + DBC pool transaction…");
     const baseMint = Keypair.generate();
