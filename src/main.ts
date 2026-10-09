@@ -201,6 +201,9 @@ function readCurve() {
   if (![startingFeeBps, endingFeeBps].every((v) => Number.isInteger(v) && v >= 25 && v <= 9900)) {
     throw new Error("Starting and ending fees must be whole numbers from 25 to 9,900 basis points.");
   }
+  if (endingFeeBps > startingFeeBps) {
+    throw new Error("Ending fee must be less than or equal to starting fee for this linear decay schedule.");
+  }
   if (!Number.isInteger(feePeriods) || feePeriods < 0 || !Number.isInteger(feeDuration) || feeDuration < 0) {
     throw new Error("Fee schedule periods and duration must be non-negative whole numbers.");
   }
@@ -213,6 +216,9 @@ function readCurve() {
   }
   if (partnerLiquidityPct + partnerLockedPct + creatorLiquidityPct + creatorLockedPct !== 100) {
     throw new Error("Partner liquidity, partner locked, creator liquidity, and creator locked percentages must add up to exactly 100.");
+  }
+  if (partnerLockedPct + creatorLockedPct < 10) {
+    throw new Error("At least 10% of liquidity must be permanently locked or vesting for the DAMM v2 migration.");
   }
 
   return buildCurveWithMarketCap({
