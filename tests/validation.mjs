@@ -30,13 +30,19 @@ for (const marker of [
   "cluster=devnet",
   "startingFeeBps",
   "endingFeeBps",
+  "feePeriods",
+  "feeDuration",
+  "v >= 25 && v <= 9900",
+  "startingFeeBps !== endingFeeBps && (feePeriods < 1 || feeDuration < 1)",
   "creatorTradingFeePercentage: creatorFeePct",
   "partnerLiquidityPercentage: partnerLiquidityPct",
   "confirmation.value.err",
   "This MVP uses static metadata",
   "partnerLiquidityPct + partnerLockedPct + creatorLiquidityPct + creatorLockedPct !== 100",
   'id="startingFeeBps"',
-  'id="endingFeeBps"'
+  'id="endingFeeBps"',
+  'id="feePeriods"',
+  'id="feeDuration"'
 ]) {
   assert.ok(source.includes(marker), `missing integration marker: ${marker}`);
 }
