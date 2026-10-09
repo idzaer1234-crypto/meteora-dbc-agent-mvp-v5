@@ -27,12 +27,22 @@ for (const marker of [
   "client.creator.createPool",
   "signTransaction",
   "sendRawTransaction",
-  "cluster=devnet"
+  "cluster=devnet",
+  "startingFeeBps",
+  "endingFeeBps",
+  "creatorTradingFeePercentage: creatorFeePct",
+  "partnerLiquidityPercentage: partnerLiquidityPct",
+  "confirmation.value.err",
+  "This MVP uses static metadata",
+  "partnerLiquidityPct + partnerLockedPct + creatorLiquidityPct + creatorLockedPct !== 100",
+  'id="startingFeeBps"',
+  'id="endingFeeBps"'
 ]) {
   assert.ok(source.includes(marker), `missing integration marker: ${marker}`);
 }
 
 assert.ok(source.includes("Devnet"));
 assert.ok(source.includes("signTransaction"));
+assert.ok(source.includes("busy = false;\n      updateButtons();"), "wallet buttons must be re-enabled after connect/disconnect");
 console.log("MVP v5 validation: PASS");
 console.log(`Checked ${required.length} required files and core Devnet/Phantom markers.`);
