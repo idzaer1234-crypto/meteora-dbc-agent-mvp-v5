@@ -11,6 +11,16 @@
 
 Meteora DBC Agent MVP v5 is a browser-based, non-custodial prototype for preparing and submitting Meteora Dynamic Bonding Curve configuration and token/pool creation transactions on Solana Devnet. The user connects Phantom and approves each transaction. The app does not request seed phrases or private keys.
 
+## Suggested Superteam Earn form fields
+
+- **Target listing:** https://superteam.fun/earn/listing/meteora-dbc/
+- **Project title:** Meteora DBC Launch Configurator — Devnet MVP
+- **Primary submission URL:** https://meteora-dbc-agent-mvp-v5.vercel.app
+- **Source code URL:** https://github.com/idzaer1234-crypto/meteora-dbc-agent-mvp-v5
+- **Short description:** A non-custodial browser MVP for configuring Meteora DBC launch parameters and creating a DBC config plus token/pool on Solana Devnet through explicit Phantom approval.
+- **Long description:** This prototype lets a user connect Phantom, configure initial and migration market caps, starting and ending fees, creator trading-fee percentage, and partner/creator liquidity allocation. It validates the liquidity split, requests Phantom signatures for the DBC config and token/pool transactions, confirms transactions against Solana Devnet, reads created accounts back, and provides Devnet Explorer links. It is deliberately non-custodial and has no Mainnet execution path. It remains an MVP: live end-to-end wallet transactions have not been independently verified in this work session, and graduation/migration and swap UI are not wired.
+- **Submission status:** Do not submit until the latest deployment is READY and the live app is opened successfully in a normal browser session. If the bounty requires a working end-to-end on-chain demonstration, test with a disposable Devnet wallet and retain Explorer links before claiming that criterion is met.
+
 ## Copy-ready submission post
 
 Built **Meteora DBC Agent MVP v5** — a browser-first, non-custodial prototype for Meteora Dynamic Bonding Curve launches on Solana Devnet.
