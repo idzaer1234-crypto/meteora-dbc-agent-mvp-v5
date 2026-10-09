@@ -93,6 +93,13 @@ function render() {
           <label>Symbol<input id="tokenSymbol" value="${METADATA_SYMBOL}" maxlength="10"></label>
           <label>Initial market cap (SOL)<input id="initialCap" type="number" min="0.001" step="0.001" value="0.1"></label>
           <label>Migration market cap (SOL)<input id="migrationCap" type="number" min="0.002" step="0.001" value="1"></label>
+          <label>Starting fee (basis points)<input id="startingFeeBps" type="number" min="1" max="10000" step="1" value="100"></label>
+          <label>Ending fee (basis points)<input id="endingFeeBps" type="number" min="1" max="10000" step="1" value="100"></label>
+          <label>Creator trading fee (%)<input id="creatorFeePct" type="number" min="0" max="100" step="1" value="50"></label>
+          <label>Partner liquidity (%)<input id="partnerLiquidityPct" type="number" min="0" max="100" step="1" value="50"></label>
+          <label>Partner permanently locked (%)<input id="partnerLockedPct" type="number" min="0" max="100" step="1" value="5"></label>
+          <label>Creator liquidity (%)<input id="creatorLiquidityPct" type="number" min="0" max="100" step="1" value="40"></label>
+          <label>Creator permanently locked (%)<input id="creatorLockedPct" type="number" min="0" max="100" step="1" value="5"></label>
         </div>
         <div class="actions">
           <button id="createConfig" disabled>Create DBC Config</button>
@@ -177,8 +184,25 @@ async function send(signed: Transaction, latest: { blockhash: string; lastValidB
 function readCurve() {
   const initial = Number((document.querySelector<HTMLInputElement>("#initialCap")!).value);
   const migration = Number((document.querySelector<HTMLInputElement>("#migrationCap")!).value);
+  const startingFeeBps = Number((document.querySelector<HTMLInputElement>("#startingFeeBps")!).value);
+  const endingFeeBps = Number((document.querySelector<HTMLInputElement>("#endingFeeBps")!).value);
+  const creatorFeePct = Number((document.querySelector<HTMLInputElement>("#creatorFeePct")!).value);
+  const partnerLiquidityPct = Number((document.querySelector<HTMLInputElement>("#partnerLiquidityPct")!).value);
+  const partnerLockedPct = Number((document.querySelector<HTMLInputElement>("#partnerLockedPct")!).value);
+  const creatorLiquidityPct = Number((document.querySelector<HTMLInputElement>("#creatorLiquidityPct")!).value);
+  const creatorLockedPct = Number((document.querySelector<HTMLInputElement>("#creatorLockedPct")!).value);
   if (!Number.isFinite(initial) || !Number.isFinite(migration) || initial <= 0 || migration <= initial) {
     throw new Error("Migration market cap must be greater than initial market cap.");
+  }
+  if (![startingFeeBps, endingFeeBps].every((v) => Number.isInteger(v) && v >= 1 && v <= 10000)) {
+    throw new Error("Starting and ending fees must be whole numbers from 1 to 10,000 basis points.");
+  }
+  if (![creatorFeePct, partnerLiquidityPct, partnerLockedPct, creatorLiquidityPct, creatorLockedPct]
+      .every((v) => Number.isFinite(v) && v >= 0 && v <= 100)) {
+    throw new Error("Fee and liquidity percentages must be between 0 and 100.");
+  }
+  if (partnerLiquidityPct + partnerLockedPct + creatorLiquidityPct + creatorLockedPct !== 100) {
+    throw new Error("Partner liquidity, partner locked, creator liquidity, and creator locked percentages must add up to exactly 100.");
   }
 
   return buildCurveWithMarketCap({
@@ -194,15 +218,15 @@ function readCurve() {
       baseFeeParams: {
         baseFeeMode: BaseFeeMode.FeeSchedulerLinear,
         feeSchedulerParam: {
-          startingFeeBps: 100,
-          endingFeeBps: 100,
+          startingFeeBps,
+          endingFeeBps,
           numberOfPeriod: 0,
           totalDuration: 0
         }
       },
       dynamicFeeEnabled: true,
       collectFeeMode: CollectFeeMode.QuoteToken,
-      creatorTradingFeePercentage: 50,
+      creatorTradingFeePercentage: creatorFeePct,
       poolCreationFee: 0,
       enableFirstSwapWithMinFee: false
     },
@@ -212,10 +236,10 @@ function readCurve() {
       migrationFee: { feePercentage: 0, creatorFeePercentage: 0 }
     },
     liquidityDistribution: {
-      partnerLiquidityPercentage: 50,
-      partnerPermanentLockedLiquidityPercentage: 5,
-      creatorLiquidityPercentage: 40,
-      creatorPermanentLockedLiquidityPercentage: 5
+      partnerLiquidityPercentage: partnerLiquidityPct,
+      partnerPermanentLockedLiquidityPercentage: partnerLockedPct,
+      creatorLiquidityPercentage: creatorLiquidityPct,
+      creatorPermanentLockedLiquidityPercentage: creatorLockedPct
     },
     lockedVesting: {
       totalLockedVestingAmount: 0,
