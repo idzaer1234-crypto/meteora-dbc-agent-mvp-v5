@@ -54,3 +54,14 @@ assert.ok(source.includes("signTransaction"));
 assert.ok(source.includes("busy = false;\n      updateButtons();"), "wallet buttons must be re-enabled after connect/disconnect");
 console.log("MVP v5 validation: PASS");
 console.log(`Checked ${required.length} required files and core Devnet/Phantom markers.`);
+
+const rpcMatch = source.match(/const RPC_URL = ["']([^"']+)["']/);
+assert.ok(rpcMatch, "RPC_URL must be explicitly declared");
+assert.equal(rpcMatch[1], "https://api.devnet.solana.com", "all app RPC traffic must remain on Solana Devnet");
+assert.ok(source.includes('new Connection(RPC_URL, "confirmed")'), "Solana Connection must use the guarded Devnet RPC");
+assert.ok(source.includes('const EXPLORER = "https://explorer.solana.com"'), "Explorer base URL must be the official Solana Explorer");
+assert.ok(source.includes("?cluster=devnet"), "Explorer links must explicitly select Devnet");
+assert.doesNotMatch(source, /https?:\\/\\/(?:api\\.mainnet-beta\\.solana\\.com|api\\.mainnet\\.solana\\.com)/i, "Mainnet RPC endpoints must not be present");
+assert.doesNotMatch(source, /<input[^>]+(?:seed.?phrase|mnemonic|private.?key)/i, "UI must not request seed phrases, mnemonics, or private keys");
+assert.doesNotMatch(source, /id=["'](?:seedPhrase|mnemonic|privateKey)["']/i, "UI must not define credential input fields");
+console.log("Devnet safety regression checks: PASS");
